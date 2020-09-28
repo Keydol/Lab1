@@ -15,12 +15,30 @@ namespace Lab1
         {
             return Math.Tan(1.2 * x) - 2 + 3 * x;
         }
+         static double derivativeFunction(double x)
+        {
+            return 3 * Math.Pow(x, 2) + 6 * x - 24;
+        }
+          static double derivativeTranscendentalFunction(double x)
+        {
+            return 3 +(1.2 / Math.Pow(Math.Cos(1.2 * x),2));
+        }
+        static double secondDerivativeFunction(double x)
+        {
+            return 6 * x + 6;
+        }
+        static double secondDerivativeTranscendentalFunction(double x)
+        {
+            return 2.88 * (Math.Sin(1.2 * x)/Math.Cos(1.2 * x));
+        }
 
         static void Main(string[] args)
         {
             double x1;
             double x2;
             double E = 1e-3; //точність
+            string arithmeticEquation = "x^3 + 3x^2 - 24x + 1 = 0";
+            string transcendentalEquation = "tg(1,2x) - 2 + 3x = 0";
 
             Console.WriteLine("======== Алгебраїчне рiвняння x^3 + 3x^2 - 24x + 1 ========");
             x1 = 3;
@@ -29,7 +47,7 @@ namespace Lab1
             //methodKombinovanyi(x1, x2, E, f1);
             methodDyhotomii(x1, x2, E, f1);
             methodHord(x1, x2, E, f1);
-            
+            methodNewton(x1, x2, E, f1, derivativeFunction, secondDerivativeFunction,arithmeticEquation); 
 
 
             Console.WriteLine("\n\n======== Трансцендентне рiвняння tg(1,2x) - 2 + 3x ========");
@@ -39,6 +57,7 @@ namespace Lab1
             //methodKombinovanyi(x1, x2, E, f2);
             methodDyhotomii(x1, x2, E, f2);
             methodHord(x1, x2, E, f2);
+            methodNewton(x1, x2,E, f2, derivativeTranscendentalFunction, secondDerivativeTranscendentalFunction,transcendentalEquation);
             Console.ReadLine();
         }
 
@@ -90,6 +109,35 @@ namespace Lab1
 
             Console.WriteLine($" x = {Math.Round(x_next, 3)}");
             Console.WriteLine($" Кiлькiсть iтерацiй = {i}\n");
+        }
+        static void methodNewton(double x1, double x2, double E, function functionTask,function derivativeFunction, function secondDerivativeFunction,String equation)
+        {
+            Console.WriteLine("\t== Метод Ньютона (дотичних) ==\n");
+            int iterator = 1;
+            double initValueX;
+            double iValueX;
+            double a = x1;
+            double b = x2;
+            double e = E;
+            if (functionTask(a) * functionTask(b) > 0) // Якщо знаки функції на краях відрізків однакові, то функція коренів немає
+            {
+                Console.WriteLine("На даному iнтервалi [{0};{1}] рiвняння {2} немає розв'язкiв",a,b,equation);
+            }
+            else
+            {
+                initValueX = functionTask(a) * secondDerivativeFunction(a) > 0 ? a : b; // Визначаємо нерухомий кінець та задаємо початкове значення
+                iValueX = initValueX - functionTask(initValueX) / derivativeFunction(initValueX); // Визначаємо перше наближення
+                Console.WriteLine("Поточна iтерацiя {0} = {1}", iterator, iValueX);
+                while (Math.Abs(initValueX - iValueX) > e) // Поки різниця по модулю між коренями не стане меншою за точність e
+                {
+                    iterator++;
+                    initValueX = iValueX;
+                    iValueX = initValueX - functionTask(initValueX) / derivativeFunction(initValueX);
+                    Console.WriteLine("Поточна iтерацiя {0} = {1}", iterator, iValueX);
+                }
+                Console.WriteLine($" x = {Math.Round(iValueX, 3)}");
+                Console.WriteLine($" Кiлькiсть iтерацiй = {iterator}\n");
+            }
         }
     }
 }
