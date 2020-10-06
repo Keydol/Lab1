@@ -44,27 +44,43 @@ namespace Lab1
             x1 = 3;
             x2 = 4;    
             Console.WriteLine($"======== Уточнення коренiв на вiдрiзку [{x1} ; {x2}] ========\n");
-            //methodKombinovanyi(x1, x2, E, f1);
-            methodDyhotomii(x1, x2, E, f1);
-            methodHord(x1, x2, E, f1);
             methodNewton(x1, x2, E, f1, derivativeFunction, secondDerivativeFunction,arithmeticEquation); 
             methodIterracii(x1, x2, E, f1, derivativeFunction);
+            methodDyhotomii(x1, x2, E, f1);
+            methodHord(x1, x2, E, f1);
+            methodKombinovanyi(x1, x2, E, f1, derivativeFunction);
 
             Console.WriteLine("\n\n======== Трансцендентне рiвняння tg(1,2x) - 2 + 3x ========");
             x1 = 0;
             x2 = 1;
             Console.WriteLine($"======== Уточнення коренiв на вiдрiзку [{x1} ; {x2}] ========\n");
-            //methodKombinovanyi(x1, x2, E, f2);
-            methodDyhotomii(x1, x2, E, f2);
-            methodHord(x1, x2, E, f2);
             methodNewton(x1, x2,E, f2, derivativeTranscendentalFunction, secondDerivativeTranscendentalFunction,transcendentalEquation);
             methodIterracii(x1, x2, E, f2, derivativeTranscendentalFunction);
+            methodDyhotomii(x1, x2, E, f2);
+            methodHord(x1, x2, E, f2);
+            methodKombinovanyi(x1, x2, E, f2, derivativeTranscendentalFunction);
             Console.ReadLine();
         }
 
-        static void methodKombinovanyi(double x1, double x2, double E, function f)
+        static void methodKombinovanyi(double x1, double x2, double E, function f, function derivativeFunction)
         {
             Console.WriteLine("\t== Комбiнований метод ==\n");
+            double a = x1;
+            double b = x2;
+            double x = 0;
+            int i = 0;
+            while(Math.Abs(a - b) > E)
+            {
+                a -= f(a) * (a - b) / (f(a) - f(b));
+                b = b - f(b) / derivativeFunction(b);
+                x = (a + b) / 2;
+                i++;
+
+                Console.WriteLine("Поточна iтерацiя {0} = {1}", i, x);
+            }
+
+            Console.WriteLine($" x = {Math.Round(x, 3)}");
+            Console.WriteLine($" Кiлькiсть iтерацiй = {i}\n");
         }
 
         static void methodDyhotomii(double x1, double x2, double E, function f)
@@ -84,6 +100,8 @@ namespace Lab1
                 else if (f(xTo) * f(x) == 0) break;
                 else xTo = x;
                 dx = xTo - xLast;
+
+                Console.WriteLine("Поточна iтерацiя {0} = {1}", i, x);
             }
 
             Console.WriteLine($" x = {Math.Round(x, 3)}");
@@ -106,6 +124,8 @@ namespace Lab1
                 x_curr = x_next;
                 x_next -= f(x_curr) * (x_curr - x_last) / (f(x_curr) - f(x_last));
                 dx = x_next - x_curr;
+
+                Console.WriteLine("Поточна iтерацiя {0} = {1}", i, x_next);
             }
 
             Console.WriteLine($" x = {Math.Round(x_next, 3)}");
