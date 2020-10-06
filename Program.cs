@@ -48,7 +48,7 @@ namespace Lab1
             methodDyhotomii(x1, x2, E, f1);
             methodHord(x1, x2, E, f1);
             methodNewton(x1, x2, E, f1, derivativeFunction, secondDerivativeFunction,arithmeticEquation); 
-
+            methodIterracii(x1, x2, E, f1, derivativeFunction);
 
             Console.WriteLine("\n\n======== Трансцендентне рiвняння tg(1,2x) - 2 + 3x ========");
             x1 = 0;
@@ -58,6 +58,7 @@ namespace Lab1
             methodDyhotomii(x1, x2, E, f2);
             methodHord(x1, x2, E, f2);
             methodNewton(x1, x2,E, f2, derivativeTranscendentalFunction, secondDerivativeTranscendentalFunction,transcendentalEquation);
+            methodIterracii(x1, x2, E, f2, derivativeTranscendentalFunction);
             Console.ReadLine();
         }
 
@@ -139,5 +140,57 @@ namespace Lab1
                 Console.WriteLine($" Кiлькiсть iтерацiй = {iterator}\n");
             }
         }
+        static void methodIterracii(double x1, double x2, double E, function f1, function derivateFunction)
+            {
+                Console.WriteLine("\t== Метод простої iтерацiї ==\n");
+         
+                double min = derivateFunction(x1);
+                double max = derivateFunction(x2);
+                double lmb;
+                double X0 = x1;
+                int iterator=1;
+                
+                if (min != 0)
+                {
+                    lmb = 2 / (min + max);
+                }
+                else lmb = 1 / max;
+                double q = 1 - lmb;
+                double X = Phi(X0, lmb,f1);
+            
+                if (q <= 0.5)
+                {
+                    Console.WriteLine("Поточна iтерацiя {0} = {1}", iterator, X);
+                    while (Math.Abs(X - X0) > ((1 - q) / q) * E)
+                    {
+                        iterator++;
+                        X0 = X;
+                        X = Phi(X0, lmb,f1);
+                        Console.WriteLine("Поточна iтерацiя {0} = {1}", iterator, X);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Поточна iтерацiя {0} = {1}", iterator, X);
+                    if (q > 0.5 && q < 1)
+                    {
+                        while (Math.Abs(X - X0) > E)
+                        {
+                            iterator++;
+                            X0 = X;
+                            X = Phi(X0, lmb, f1);
+                            Console.WriteLine("Поточна iтерацiя {0} = {1}", iterator, X);
+                        }
+                    }
+                }
+                Console.WriteLine($" x = {Math.Round(X, 3)}");
+                Console.WriteLine($" Кiлькiсть iтерацiй = {iterator}\n");
+
+            }   
+            
+            static double Phi(double x, double lmb, function f)
+            {
+                 return x - lmb * f(x);
+            }
     }
 }
